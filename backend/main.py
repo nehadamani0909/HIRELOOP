@@ -16,12 +16,6 @@ from schemas import (
     SuggestionAIAnalyzeResponse,
     LangGraphAnalyzeResponse
 )
-from agents.resume_agent import extract_resume_information
-from agents.jd_agent import extract_jd_information
-from agents.matching_agent import match_resume_to_jd
-from agents.evidence_agent import generate_evidence
-from agents.resume_suggestion_agent import generate_resume_suggestions
-from agents.workflow import hireloop_graph
 
 
 app = FastAPI(title="HireLoop Backend")
@@ -80,6 +74,8 @@ async def analyze_resume_ai(
     job_description: str = Form(...),
     company_name: str = Form(...)
 ):
+    from agents.resume_agent import extract_resume_information
+
     file_bytes = await resume.read()
 
     resume_text = extract_text_from_pdf(file_bytes)
@@ -100,6 +96,9 @@ async def analyze_full_ai(
     job_description: str = Form(...),
     company_name: str = Form(...)
 ):
+    from agents.resume_agent import extract_resume_information
+    from agents.jd_agent import extract_jd_information
+
     file_bytes = await resume.read()
     resume_text = extract_text_from_pdf(file_bytes)
 
@@ -121,6 +120,10 @@ async def analyze_match_ai(
     job_description: str = Form(...),
     company_name: str = Form(...)
 ):
+    from agents.resume_agent import extract_resume_information
+    from agents.jd_agent import extract_jd_information
+    from agents.matching_agent import match_resume_to_jd
+
     file_bytes = await resume.read()
     resume_text = extract_text_from_pdf(file_bytes)
 
@@ -148,6 +151,11 @@ async def analyze_evidence_ai(
     job_description: str = Form(...),
     company_name: str = Form(...)
 ):
+    from agents.resume_agent import extract_resume_information
+    from agents.jd_agent import extract_jd_information
+    from agents.matching_agent import match_resume_to_jd
+    from agents.evidence_agent import generate_evidence
+
     file_bytes = await resume.read()
     resume_text = extract_text_from_pdf(file_bytes)
 
@@ -181,6 +189,12 @@ async def analyze_suggestion_ai(
     job_description: str = Form(...),
     company_name: str = Form(...)
 ):
+    from agents.resume_agent import extract_resume_information
+    from agents.jd_agent import extract_jd_information
+    from agents.matching_agent import match_resume_to_jd
+    from agents.evidence_agent import generate_evidence
+    from agents.resume_suggestion_agent import generate_resume_suggestions
+
     file_bytes = await resume.read()
     resume_text = extract_text_from_pdf(file_bytes)
 
@@ -222,6 +236,8 @@ async def analyze_langgraph(
     job_description: str = Form(...),
     company_name: str = Form(...)
 ):
+    from agents.workflow import hireloop_graph
+
     file_bytes = await resume.read()
     resume_text = extract_text_from_pdf(file_bytes)
 
