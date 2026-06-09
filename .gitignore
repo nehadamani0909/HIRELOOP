@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+backend/venv/
+venv/
+.venv/
+
+# Build outputs
+frontend/.next/
+frontend/out/
+frontend/build/
+dist/
+build/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+*.pem
+*.key
+
+# Platform/local state
+.vercel/
+.render/
+.DS_Store
+.vscode/
+
+# Generated metadata
+*.tsbuildinfo
+frontend/next-env.d.ts
+
+# Local backups
+*.bak
