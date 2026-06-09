@@ -1,8 +1,6 @@
 import os
 import json
 from groq import Groq
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
 
 from config import load_backend_env
 
@@ -178,7 +176,12 @@ def normalize_skill(skill: str) -> str:
 def get_semantic_model():
     global semantic_model
 
+    if os.getenv("ENABLE_SEMANTIC_EMBEDDINGS", "").lower() not in {"1", "true", "yes"}:
+        return None
+
     if semantic_model is None:
+        from sentence_transformers import SentenceTransformer
+
         try:
             semantic_model = SentenceTransformer(
                 "all-MiniLM-L6-v2",
@@ -188,6 +191,12 @@ def get_semantic_model():
             semantic_model = SentenceTransformer("all-MiniLM-L6-v2")
 
     return semantic_model
+
+
+def _cosine_similarity_matrix(left_vectors, right_vectors):
+    from sklearn.metrics.pairwise import cosine_similarity
+
+    return cosine_similarity(left_vectors, right_vectors)
 
 
 def semantic_match(jd_skills, resume_sources, threshold=0.55):
@@ -223,12 +232,15 @@ def semantic_match(jd_skills, resume_sources, threshold=0.55):
         candidate_texts.append(text)
 
     model = get_semantic_model()
+    if model is None:
+        return {}
+
     jd_emb = model.encode(jd_skills)
     resume_emb = model.encode(candidate_texts)
 
     results = {}
 
-    sims = cosine_similarity(jd_emb, resume_emb)
+    sims = _cosine_similarity_matrix(jd_emb, resume_emb)
 
     for i, jd_skill in enumerate(jd_skills):
         best_idx = sims[i].argmax()
